@@ -117,11 +117,7 @@ export default function App(){
 <a className="primary" href="#catalogue">Découvrir les lentilles</a>
 </div>
 <div className="heroVisual">
-<div className="orb"/>
-<div className="heroPack heroPackMain"><img src="https://d17sjz7j5l4n5m.cloudfront.net/products/03ae7c2286efae0d8cfe44524b366ded" alt="Boîte de lentilles Air Optix Plus HydraGlyde"/></div>
-<div className="heroPack heroPackTop"><img src="https://d17sjz7j5l4n5m.cloudfront.net/products/e53158527a798b2f6123bfaca0d2395d" alt="Boîte de lentilles ACUVUE Vita"/></div>
-<div className="heroPack heroPackBottom"><img src="https://d17sjz7j5l4n5m.cloudfront.net/products/5ea08af10f6911dee7489972b66cb54c" alt="Boîte de lentilles Biofinity"/></div>
-<span><b>27 références</b><br/>pour votre vision</span>
+<img className="heroContactImage" src="./hero-lentille.jpg" alt="Pose d’une lentille de contact"/>
 </div>
 </section>
 <section className="trust">

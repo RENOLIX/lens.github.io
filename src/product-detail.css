@@ -3,6 +3,16 @@
   isolation: isolate;
 }
 
+.heroVisual .heroContactImage {
+  width: 100%;
+  height: 100%;
+  right: 0;
+  object-fit: cover;
+  object-position: 52% center;
+  border-radius: 34px;
+  filter: none;
+}
+
 .heroVisual .orb {
   width: 310px;
   height: 310px;
