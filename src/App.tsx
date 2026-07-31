@@ -22,6 +22,9 @@ products.push(
   {id:"217",brand:"BAUSCH + LOMB",name:"PureVision 2",price:8400,type:"Mensuelles",boxes:"6 lentilles",image:"https://d17sjz7j5l4n5m.cloudfront.net/products/6017af783a3aa01efa641c6085abc9cf",description:"Lentilles mensuelles PureVision 2."},
   {id:"216",brand:"ALCON",name:"Air Optix plus Hydraglyde for Astigmatism",price:18700,type:"Mensuelles",boxes:"6 lentilles",image:"https://d17sjz7j5l4n5m.cloudfront.net/products/e754857601838a41e7db87981a4c07a5",description:"Lentilles Air Optix pour astigmatisme."},
   {id:"215",brand:"MENICON",name:"Miru Toric",price:16400,type:"Mensuelles",boxes:"6 lentilles",image:"https://d17sjz7j5l4n5m.cloudfront.net/products/21d81a3beab1994ca0dbdcfc84769650",description:"Lentilles toriques Miru."},
+  {id:"214",brand:"MIRU",name:"Miru",price:9000,type:"Mensuelles",boxes:"6 lentilles",image:"https://d17sjz7j5l4n5m.cloudfront.net/products/e99caaf6c0665f2ca44602a23a5863f6",description:"Technologie MeniSilk pour une forte tenue en eau et une excellente transmissibilite a l'oxygene."},
+  {id:"213",brand:"PROCLEAR",name:"Proclear toric XR",price:36200,type:"Mensuelles",boxes:"6 lentilles",image:"https://d17sjz7j5l4n5m.cloudfront.net/products/6f6e06b751cdcb25cce0f88106d0cba9",description:"Lentilles mensuelles toriques pour astigmatisme et secheresse oculaire."},
+  {id:"212",brand:"PROCLEAR",name:"Proclear toric",price:14400,type:"Mensuelles",boxes:"6 lentilles",image:"https://d17sjz7j5l4n5m.cloudfront.net/products/7857d723407662c78e9f398e722f16c4",description:"Lentilles mensuelles toriques avec PC Technology pour le confort des yeux secs."},
 );
 const power = Array.from({length: 201}, (_, i) => (-25 + i * .25).toFixed(2).replace(".00", ".00"));
 function money(value:number) { return new Intl.NumberFormat("fr-DZ").format(value) + " DA"; }
