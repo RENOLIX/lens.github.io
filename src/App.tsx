@@ -33,6 +33,14 @@ products.push(
   {id:"11",brand:"BIOFINITY",name:"Biofinity",price:12000,type:"Mensuelles",boxes:"6 lentilles",image:"https://d17sjz7j5l4n5m.cloudfront.net/products/5ea08af10f6911dee7489972b66cb54c",description:"Lentilles mensuelles CooperVision en silicone hydrogel, conçues pour offrir une vision nette, une excellente oxygénation et un confort durable."},
 );
 const power = Array.from({length: 201}, (_, i) => (-25 + i * .25).toFixed(2).replace(".00", ".00"));
+const wilayas = [
+ "Adrar","Chlef","Laghouat","Oum El Bouaghi","Batna","Béjaïa","Biskra","Béchar","Blida","Bouira",
+ "Tamanrasset","Tébessa","Tlemcen","Tiaret","Tizi Ouzou","Alger","Djelfa","Jijel","Sétif","Saïda",
+ "Skikda","Sidi Bel Abbès","Annaba","Guelma","Constantine","Médéa","Mostaganem","M'Sila","Mascara","Ouargla",
+ "Oran","El Bayadh","Illizi","Bordj Bou Arréridj","Boumerdès","El Tarf","Tindouf","Tissemsilt","El Oued","Khenchela",
+ "Souk Ahras","Tipaza","Mila","Aïn Defla","Naâma","Aïn Témouchent","Ghardaïa","Relizane","Timimoun","Bordj Badji Mokhtar",
+ "Ouled Djellal","Béni Abbès","In Salah","In Guezzam","Touggourt","Djanet","El M'Ghair","El Meniaa"
+];
 function money(value:number) { return new Intl.NumberFormat("fr-DZ").format(value) + " DA"; }
 
 export default function App(){
@@ -271,7 +279,11 @@ function Order({product,qty}:{product:Product;qty:number}){const [sent,setSent]=
 </label>
 <label>Téléphone<input required type="tel" placeholder="05 xx xx xx xx"/>
 </label>
-<label>Adresse de livraison<textarea required placeholder="Ville, wilaya, adresse complète"/>
+<label>Wilaya<select required defaultValue="">
+<option value="" disabled>Sélectionnez votre wilaya</option>{wilayas.map(wilaya=><option value={wilaya} key={wilaya}>{wilaya}</option>)}
+</select>
+</label>
+<label>Adresse de livraison<textarea required placeholder="Commune, quartier, rue et numéro"/>
 </label>
 <button className="primary">Envoyer ma demande</button>
 </form>
