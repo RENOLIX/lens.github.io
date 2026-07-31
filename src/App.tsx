@@ -2,12 +2,6 @@ import { useMemo, useState } from "react";
 
 type Product = { id: string; brand: string; name: string; price: number; type: string; image: string; description: string; boxes: string };
 const products: Product[] = [
-  { id:"air-optix", brand:"ALCON", name:"Air Optix plus HydraGlyde", price:3900, type:"Mensuelles", boxes:"6 lentilles", image:"https://d17sjz7j5l4n5m.cloudfront.net/prescriptions/8acbb40980531e416ed5ba69b7ce2e2f", description:"Lentilles mensuelles respirantes, conçues pour un confort net du matin au soir." },
-  { id:"biofinity", brand:"COOPERVISION", name:"Biofinity", price:4200, type:"Mensuelles", boxes:"6 lentilles", image:"https://d17sjz7j5l4n5m.cloudfront.net/prescriptions/12b52d43ffacf825a9d2c27be0c80c4b", description:"Une vision précise et un excellent maintien de l’hydratation, jour après jour." },
-  { id:"soflens", brand:"BAUSCH + LOMB", name:"SofLens 59", price:2900, type:"Mensuelles", boxes:"6 lentilles", image:"https://d17sjz7j5l4n5m.cloudfront.net/products/50555caa86d98edefcc2758b9c6dcd53", description:"Une solution fiable et confortable pour votre routine de port mensuel." },
-  { id:"ultra", brand:"BAUSCH + LOMB", name:"Ultra", price:4600, type:"Mensuelles", boxes:"6 lentilles", image:"https://d17sjz7j5l4n5m.cloudfront.net/products/d6db305e7ca593eda49d25e36908b353", description:"Technologie d’hydratation moderne pour les écrans et les longues journées." },
-  { id:"acuvue", brand:"ACUVUE", name:"Acuvue Oasys", price:4500, type:"Bi-hebdomadaires", boxes:"6 lentilles", image:"https://d17sjz7j5l4n5m.cloudfront.net/products/f041ff8df8a98fc78e8cc9b4b617e792", description:"Confort haute performance et sensation de fraîcheur, même en environnement sec." },
-  { id:"total30", brand:"ALCON", name:"Total30", price:5300, type:"Mensuelles", boxes:"6 lentilles", image:"https://d17sjz7j5l4n5m.cloudfront.net/products/c50858464f455a1c0909865285e1a6dc", description:"Une lentille premium pensée pour préserver une sensation de douceur durable." },
 ];
 products.push(
   {id:"254",brand:"SOFLEX",name:"Soflex Toric",price:6250,type:"Annuelles",boxes:"1 lentille",image:"https://d17sjz7j5l4n5m.cloudfront.net/products/fba933388fbd69200bce8b4762f6490a",description:"Lentille torique annuelle."},
