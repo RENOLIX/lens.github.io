@@ -25,6 +25,8 @@ products.push(
   {id:"214",brand:"MIRU",name:"Miru",price:9000,type:"Mensuelles",boxes:"6 lentilles",image:"https://d17sjz7j5l4n5m.cloudfront.net/products/e99caaf6c0665f2ca44602a23a5863f6",description:"Technologie MeniSilk pour une forte tenue en eau et une excellente transmissibilite a l'oxygene."},
   {id:"213",brand:"PROCLEAR",name:"Proclear toric XR",price:36200,type:"Mensuelles",boxes:"6 lentilles",image:"https://d17sjz7j5l4n5m.cloudfront.net/products/6f6e06b751cdcb25cce0f88106d0cba9",description:"Lentilles mensuelles toriques pour astigmatisme et secheresse oculaire."},
   {id:"212",brand:"PROCLEAR",name:"Proclear toric",price:14400,type:"Mensuelles",boxes:"6 lentilles",image:"https://d17sjz7j5l4n5m.cloudfront.net/products/7857d723407662c78e9f398e722f16c4",description:"Lentilles mensuelles toriques avec PC Technology pour le confort des yeux secs."},
+  {id:"211",brand:"PROCLEAR",name:"Proclear",price:10200,type:"Mensuelles",boxes:"6 lentilles",image:"https://d17sjz7j5l4n5m.cloudfront.net/products/bcd8517ac1c02f2298afef6f2de452f5",description:"Lentilles mensuelles CooperVision avec PC Technology pour les yeux secs."},
+  {id:"210",brand:"BIOFINITY",name:"Biofinity XR Toric",price:36200,type:"Mensuelles",boxes:"6 lentilles",image:"https://d17sjz7j5l4n5m.cloudfront.net/products/731f938aeec87682ad4e98be822a0aeb",description:"Lentilles mensuelles toriques en silicone hydrogel pour l'astigmatisme."},
 );
 const power = Array.from({length: 201}, (_, i) => (-25 + i * .25).toFixed(2).replace(".00", ".00"));
 function money(value:number) { return new Intl.NumberFormat("fr-DZ").format(value) + " DA"; }
