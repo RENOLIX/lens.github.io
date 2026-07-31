@@ -2,5 +2,5 @@ body, button, input, textarea, select { font-family: 'Manrope', sans-serif; }
 .logo i, .hero h1, h1, h2, h3, footer p { font-family: 'Outfit', sans-serif; }
 
 /* Product feeds include a white canvas around each pack. Crop it inside a white card. */
-.productImg { overflow: hidden; background: #fff; }
-.productImg img { width: 74%; height: 74%; max-width: 74%; max-height: 74%; object-fit: contain; transform: none; filter: none; }
+.productImg { overflow: hidden; background: #fff; align-items: start; justify-items: center; }
+.productImg img { width: 74%; height: 74%; max-width: 74%; max-height: 74%; margin-top: 12px; object-fit: contain; transform: none; filter: none; }
