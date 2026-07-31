@@ -32,11 +32,196 @@ const power = Array.from({length: 201}, (_, i) => (-25 + i * .25).toFixed(2).rep
 function money(value:number) { return new Intl.NumberFormat("fr-DZ").format(value) + " DA"; }
 
 export default function App(){
- const [selected,setSelected]=useState<Product|null>(null); const [step,setStep]=useState(0); const [same,setSame]=useState<boolean|null>(null); const [method,setMethod]=useState<"manual"|"photo"|null>(null); const [qty,setQty]=useState(0); const [filter,setFilter]=useState("Toutes");
- const shown=useMemo(()=>filter==="Toutes"?products:products.filter(p=>p.type===filter),[filter]);
+ const [selected,setSelected]=useState<Product|null>(null); const [step,setStep]=useState(0); const [same,setSame]=useState<boolean|null>(null); const [method,setMethod]=useState<"manual"|"photo"|null>(null); const [qty,setQty]=useState(0); const [filter,setFilter]=useState("Toutes"); const [brand,setBrand]=useState("Toutes");
+ const brands = ["Toutes", ...Array.from(new Set(products.map((product) => product.brand)))];
+ const shown=useMemo(()=>products.filter((product)=> (filter==="Toutes"||product.type===filter) && (brand==="Toutes"||product.brand===brand)),[filter,brand]);
  const open=(p:Product)=>{setSelected(p);setStep(0);setSame(null);setMethod(null);setQty(0);window.scrollTo({top:0,behavior:"smooth"})};
- if(selected) return <main className="checkout"><header className="checkoutHead"><button onClick={()=>setSelected(null)} className="back">← Retour à la boutique</button><a className="logo">PRO <i>LENS</i></a><span>Commande sécurisée</span></header><section className="flow"><div className="progress"><span className={step>=0?"on":""}>1. Ordonnance</span><span className={step>=3?"on":""}>2. Quantité</span><span className={step>=4?"on":""}>3. Coordonnées</span></div><aside className="summary"><img src={selected.image} alt={selected.name}/><div><small>{selected.brand}</small><strong>{selected.name}</strong><em>{money(selected.price)} / boîte</em></div></aside>{step===0&&<div className="panel"><p className="eyebrow">ÉTAPE 1 / 3</p><h1>Avez-vous la même ordonnance dans les deux yeux&nbsp;?</h1><p>Nous adapterons votre sélection à votre correction.</p><div className="choice"><button onClick={()=>{setSame(true);setStep(1)}}>Oui <span>La même correction pour les deux yeux</span></button><button onClick={()=>{setSame(false);setStep(1)}}>Non <span>Une correction différente par œil</span></button></div></div>}{step===1&&<div className="panel"><p className="eyebrow">VOTRE ORDONNANCE</p><h1>Comment souhaitez-vous nous la transmettre&nbsp;?</h1><div className="choice"><button onClick={()=>{setMethod("manual");setStep(2)}}>Saisissez vos valeurs d’ordonnance <span>Entrez manuellement chaque valeur d’ordonnance.</span></button><button onClick={()=>setMethod("photo")} className={method==="photo"?"chosen":""}>Télécharger la photo <span>Une option facile si vous l’avez à portée de main.</span></button></div>{method==="photo"&&<><label className="upload">Déposez votre ordonnance ici<input type="file" accept="image/*,.pdf"/></label><button className="primary" onClick={()=>setStep(3)}>Suivant</button></>}</div>}{step===2&&<Prescription same={same===true} onNext={()=>setStep(3)}/>} {step===3&&<div className="panel"><p className="eyebrow">ÉTAPE 2 / 3</p><h1>Sélectionnez la quantité</h1><p>Chaque boîte contient {selected.boxes}.</p><div className="quantity"><button onClick={()=>setQty(Math.max(0,qty-1))}>−</button><strong>{qty}</strong><span>boîte{qty>1?"s":""}</span><button onClick={()=>setQty(qty+1)}>+</button></div><button disabled={!qty} className="primary" onClick={()=>setStep(4)}>Commander — {money(qty*selected.price)}</button></div>}{step===4&&<Order product={selected} qty={qty}/>}</section></main>
- return <main><header className="siteHead"><a className="logo">PRO <i>LENS</i></a><nav><a href="#catalogue">Lentilles</a><a href="#conseils">Nos conseils</a></nav><a className="call" href="tel:+213000000000">Besoin d’aide ?</a></header><section className="hero"><div><p className="eyebrow">VOTRE VISION, SANS COMPROMIS</p><h1>Les lentilles qui suivent votre regard.</h1><p className="lead">Une sélection experte de lentilles de contact, livrée avec simplicité. Retrouvez le confort que vos yeux méritent.</p><a className="primary" href="#catalogue">Découvrir les lentilles</a></div><div className="heroVisual"><div className="orb"/><img src="https://images.unsplash.com/photo-1559599101-f09722fb4948?auto=format&fit=crop&w=1000&q=85" alt="Femme portant des lentilles"/><span>Confort<br/><b>au quotidien</b></span></div></section><section className="trust"><span>✓ Produits certifiés</span><span>✦ Marques reconnues</span><span>⌁ Aide ordonnance</span><span>◌ Livraison en Algérie</span></section><section id="catalogue" className="catalog"><div className="sectionTop"><div><p className="eyebrow">LA SÉLECTION PRO LENS</p><h2>Trouvez vos lentilles.</h2></div><div className="filters">{["Toutes","Mensuelles","Bi-hebdomadaires"].map(x=><button className={filter===x?"active":""} onClick={()=>setFilter(x)} key={x}>{x}</button>)}</div></div><div className="grid">{shown.map(p=><article className="card" key={p.id}><div className="productImg"><img src={p.image} alt={p.name}/><span>{p.type}</span></div><div className="cardBody"><small>{p.brand}</small><h3>{p.name}</h3><p>{p.description}</p><div><strong>{money(p.price)}</strong><button onClick={()=>open(p)} className="neumorphic">Sélectionner</button></div></div></article>)}</div></section><section id="conseils" className="guide"><p className="eyebrow">UN ACHAT GUIDÉ</p><h2>Votre ordonnance, en toute simplicité.</h2><div><article><b>01</b><h3>Choisissez</h3><p>Sélectionnez les lentilles adaptées à votre usage.</p></article><article><b>02</b><h3>Indiquez</h3><p>Saisissez votre ordonnance ou transmettez-la en photo.</p></article><article><b>03</b><h3>Commandez</h3><p>Renseignez vos coordonnées pour finaliser votre demande.</p></article></div></section><footer><a className="logo">PRO <i>LENS</i></a><p>Voir net, vivre libre.</p><small>© 2026 Pro Lens. Tous droits réservés.</small></footer></main>
+ if(selected) return <main className="checkout">
+<header className="checkoutHead">
+<button onClick={()=>setSelected(null)} className="back">← Retour à la boutique</button>
+<a className="logo">PRO <i>LENS</i>
+</a>
+<span>Commande sécurisée</span>
+</header>
+<section className="flow">
+<div className="progress">
+<span className={step>=0?"on":""}>1. Ordonnance</span>
+<span className={step>=3?"on":""}>2. Quantité</span>
+<span className={step>=4?"on":""}>3. Coordonnées</span>
+</div>
+<aside className="summary">
+<img src={selected.image} alt={selected.name}/>
+<div>
+<small>{selected.brand}</small>
+<strong>{selected.name}</strong>
+<em>{money(selected.price)} / boîte</em>
+</div>
+</aside>{step===0&&<div className="panel">
+<p className="eyebrow">ÉTAPE 1 / 3</p>
+<h1>Avez-vous la même ordonnance dans les deux yeux&nbsp;?</h1>
+<p>Nous adapterons votre sélection à votre correction.</p>
+<div className="choice">
+<button onClick={()=>{setSame(true);setStep(1)}}>Oui <span>La même correction pour les deux yeux</span>
+</button>
+<button onClick={()=>{setSame(false);setStep(1)}}>Non <span>Une correction différente par œil</span>
+</button>
+</div>
+</div>}{step===1&&<div className="panel">
+<p className="eyebrow">VOTRE ORDONNANCE</p>
+<h1>Comment souhaitez-vous nous la transmettre&nbsp;?</h1>
+<div className="choice">
+<button onClick={()=>{setMethod("manual");setStep(2)}}>Saisissez vos valeurs d’ordonnance <span>Entrez manuellement chaque valeur d’ordonnance.</span>
+</button>
+<button onClick={()=>setMethod("photo")} className={method==="photo"?"chosen":""}>Télécharger la photo <span>Une option facile si vous l’avez à portée de main.</span>
+</button>
+</div>{method==="photo"&&<>
+<label className="upload">Déposez votre ordonnance ici<input type="file" accept="image/*,.pdf"/>
+</label>
+<button className="primary" onClick={()=>setStep(3)}>Suivant</button>
+</>}</div>}{step===2&&<Prescription same={same===true} onNext={()=>setStep(3)}/>} {step===3&&<div className="panel">
+<p className="eyebrow">ÉTAPE 2 / 3</p>
+<h1>Sélectionnez la quantité</h1>
+<p>Chaque boîte contient {selected.boxes}.</p>
+<div className="quantity">
+<button onClick={()=>setQty(Math.max(0,qty-1))}>−</button>
+<strong>{qty}</strong>
+<span>boîte{qty>1?"s":""}</span>
+<button onClick={()=>setQty(qty+1)}>+</button>
+</div>
+<button disabled={!qty} className="primary" onClick={()=>setStep(4)}>Commander — {money(qty*selected.price)}</button>
+</div>}{step===4&&<Order product={selected} qty={qty}/>}</section>
+</main>
+ return <main>
+<header className="siteHead">
+<a className="logo">PRO <i>LENS</i>
+</a>
+<nav>
+<a href="#catalogue">Lentilles</a>
+<a href="#conseils">Nos conseils</a>
+</nav>
+<a className="call" href="tel:+213000000000">Besoin d’aide ?</a>
+</header>
+<section className="hero">
+<div>
+<p className="eyebrow">VOTRE VISION, SANS COMPROMIS</p>
+<h1>Les lentilles qui suivent votre regard.</h1>
+<p className="lead">Une sélection experte de lentilles de contact, livrée avec simplicité. Retrouvez le confort que vos yeux méritent.</p>
+<a className="primary" href="#catalogue">Découvrir les lentilles</a>
+</div>
+<div className="heroVisual">
+<div className="orb"/>
+<img src="https://images.unsplash.com/photo-1559599101-f09722fb4948?auto=format&fit=crop&w=1000&q=85" alt="Femme portant des lentilles"/>
+<span>Confort<br/>
+<b>au quotidien</b>
+</span>
+</div>
+</section>
+<section className="trust">
+<span>✓ Produits certifiés</span>
+<span>✦ Marques reconnues</span>
+<span>⌁ Aide ordonnance</span>
+<span>◌ Livraison en Algérie</span>
+</section>
+<section id="catalogue" className="catalog">
+<div className="brandPicker">
+<div>
+<p className="eyebrow">CHOISIR PAR MARQUE</p>
+<h3>Nos marques disponibles</h3>
+</div>
+<div className="brandRail">{brands.map((item)=><button className={brand===item?"active":""} onClick={()=>setBrand(item)} key={item}>{item}</button>)}</div>
+</div>
+<div className="sectionTop">
+<div>
+<p className="eyebrow">LA SÉLECTION PRO LENS</p>
+<h2>Trouvez vos lentilles.</h2>
+</div>
+<div className="filters">{["Toutes","Mensuelles","Bi-hebdomadaires"].map(x=>
+<button className={filter===x?"active":""} onClick={()=>setFilter(x)} key={x}>{x}</button>)}</div>
+</div>
+<div className="grid">{shown.map(p=>
+<article className="card" key={p.id}>
+<div className="productImg">
+<img src={p.image} alt={p.name}/>
+<span>{p.type}</span>
+</div>
+<div className="cardBody">
+<small>{p.brand}</small>
+<h3>{p.name}</h3>
+<p>{p.description}</p>
+<div>
+<strong>{money(p.price)}</strong>
+<button onClick={()=>open(p)} className="neumorphic">Sélectionner</button>
+</div>
+</div>
+</article>)}</div>
+</section>
+<section id="conseils" className="guide">
+<p className="eyebrow">UN ACHAT GUIDÉ</p>
+<h2>Votre ordonnance, en toute simplicité.</h2>
+<div>
+<article>
+<b>01</b>
+<h3>Choisissez</h3>
+<p>Sélectionnez les lentilles adaptées à votre usage.</p>
+</article>
+<article>
+<b>02</b>
+<h3>Indiquez</h3>
+<p>Saisissez votre ordonnance ou transmettez-la en photo.</p>
+</article>
+<article>
+<b>03</b>
+<h3>Commandez</h3>
+<p>Renseignez vos coordonnées pour finaliser votre demande.</p>
+</article>
+</div>
+</section>
+<footer>
+<a className="logo">PRO <i>LENS</i>
+</a>
+<p>Voir net, vivre libre.</p>
+<small>© 2026 Pro Lens. Tous droits réservés.</small>
+</footer>
+</main>
 }
-function Prescription({same,onNext}:{same:boolean;onNext:()=>void}){const fields=same?["OD — Œil droit"]:["OD — Œil droit","OG — Œil gauche"];return <div className="panel prescription"><p className="eyebrow">ÉTAPE 1 / 3</p><h1>Sélectionnez votre ordonnance</h1><p>Saisissez les valeurs indiquées par votre professionnel de santé.</p>{fields.map(x=><fieldset key={x}><legend>{x}</legend><label>Sphère ou Puissance (SPH/PWR/D)<select required><option value="">Sélectionner</option>{power.map(v=><option value={v} key={v}>{Number(v)>0?"+":""}{v}</option>)}</select></label><label>Courbe de base (BC)<select defaultValue="8.6"><option>8.4</option><option>8.6</option></select></label><label>Diamètre (DIA)<select defaultValue="14"><option>14</option><option>14.2</option><option>14.5</option></select></label></fieldset>)}<button className="primary" onClick={onNext}>Suivant</button></div>}
-function Order({product,qty}:{product:Product;qty:number}){const [sent,setSent]=useState(false);return <div className="panel">{sent?<><p className="eyebrow">DEMANDE ENREGISTRÉE</p><h1>Merci, votre demande est prête.</h1><p>Nous vous recontacterons rapidement afin de confirmer votre commande de {qty} boîte{qty>1?"s":""} de {product.name}.</p></>:<><p className="eyebrow">ÉTAPE 3 / 3</p><h1>Vos coordonnées</h1><p>Nous vous recontacterons pour confirmer votre commande — aucun paiement n’est demandé en ligne.</p><form onSubmit={e=>{e.preventDefault();setSent(true)}}><label>Nom complet<input required placeholder="Votre nom"/></label><label>Téléphone<input required type="tel" placeholder="05 xx xx xx xx"/></label><label>Adresse de livraison<textarea required placeholder="Ville, wilaya, adresse complète"/></label><button className="primary">Envoyer ma demande</button></form></>}</div>}
+function Prescription({same,onNext}:{same:boolean;onNext:()=>void}){const fields=same?["OD — Œil droit"]:["OD — Œil droit","OG — Œil gauche"];return <div className="panel prescription">
+<p className="eyebrow">ÉTAPE 1 / 3</p>
+<h1>Sélectionnez votre ordonnance</h1>
+<p>Saisissez les valeurs indiquées par votre professionnel de santé.</p>{fields.map(x=>
+<fieldset key={x}>
+<legend>{x}</legend>
+<label>Sphère ou Puissance (SPH/PWR/D)<select required>
+<option value="">Sélectionner</option>{power.map(v=>
+<option value={v} key={v}>{Number(v)>0?"+":""}{v}</option>)}</select>
+</label>
+<label>Courbe de base (BC)<select defaultValue="8.6">
+<option>8.4</option>
+<option>8.6</option>
+</select>
+</label>
+<label>Diamètre (DIA)<select defaultValue="14">
+<option>14</option>
+<option>14.2</option>
+<option>14.5</option>
+</select>
+</label>
+</fieldset>)}<button className="primary" onClick={onNext}>Suivant</button>
+</div>}
+function Order({product,qty}:{product:Product;qty:number}){const [sent,setSent]=useState(false);return <div className="panel">{sent?<>
+<p className="eyebrow">DEMANDE ENREGISTRÉE</p>
+<h1>Merci, votre demande est prête.</h1>
+<p>Nous vous recontacterons rapidement afin de confirmer votre commande de {qty} boîte{qty>1?"s":""} de {product.name}.</p>
+</>:<>
+<p className="eyebrow">ÉTAPE 3 / 3</p>
+<h1>Vos coordonnées</h1>
+<p>Nous vous recontacterons pour confirmer votre commande — aucun paiement n’est demandé en ligne.</p>
+<form onSubmit={e=>{e.preventDefault();setSent(true)}}>
+<label>Nom complet<input required placeholder="Votre nom"/>
+</label>
+<label>Téléphone<input required type="tel" placeholder="05 xx xx xx xx"/>
+</label>
+<label>Adresse de livraison<textarea required placeholder="Ville, wilaya, adresse complète"/>
+</label>
+<button className="primary">Envoyer ma demande</button>
+</form>
+</>}</div>}

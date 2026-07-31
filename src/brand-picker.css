@@ -1,0 +1,5 @@
+.brandPicker { margin: 0 0 48px; padding: 26px; border-radius: 22px; background: #eef4f3; }
+.brandPicker h3 { margin: 0; font-size: 1.45rem; color: var(--ink); }
+.brandRail { display: flex; gap: 10px; overflow-x: auto; margin-top: 20px; padding-bottom: 4px; }
+.brandRail button { flex: 0 0 auto; min-width: 132px; min-height: 52px; border: 1px solid #d4e1df; border-radius: 11px; background: #fff; color: var(--ink); padding: 10px 14px; font-family: 'Outfit', sans-serif; font-size: .88rem; font-weight: 700; text-align: center; }
+.brandRail button:hover, .brandRail button.active { border-color: var(--ink); background: var(--ink); color: #fff; }
