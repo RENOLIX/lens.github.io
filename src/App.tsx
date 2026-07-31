@@ -9,6 +9,20 @@ const products: Product[] = [
   { id:"acuvue", brand:"ACUVUE", name:"Acuvue Oasys", price:4500, type:"Bi-hebdomadaires", boxes:"6 lentilles", image:"https://d17sjz7j5l4n5m.cloudfront.net/products/f041ff8df8a98fc78e8cc9b4b617e792", description:"Confort haute performance et sensation de fraîcheur, même en environnement sec." },
   { id:"total30", brand:"ALCON", name:"Total30", price:5300, type:"Mensuelles", boxes:"6 lentilles", image:"https://d17sjz7j5l4n5m.cloudfront.net/products/c50858464f455a1c0909865285e1a6dc", description:"Une lentille premium pensée pour préserver une sensation de douceur durable." },
 ];
+products.push(
+  {id:"254",brand:"SOFLEX",name:"Soflex Toric",price:6250,type:"Annuelles",boxes:"1 lentille",image:"https://d17sjz7j5l4n5m.cloudfront.net/products/fba933388fbd69200bce8b4762f6490a",description:"Lentille torique annuelle."},
+  {id:"253",brand:"SOFLEX",name:"Soflex",price:3200,type:"Annuelles",boxes:"1 lentille",image:"https://d17sjz7j5l4n5m.cloudfront.net/products/97f2975b62ee7eeb427b67a0c16bb3f9",description:"Lentille annuelle Soflex."},
+  {id:"244",brand:"SOLEKO",name:"Soleko Toric",price:6650,type:"Annuelles",boxes:"1 lentille",image:"https://d17sjz7j5l4n5m.cloudfront.net/products/2aeba2bf44c4ef64b4c79c0b39541fb5",description:"Lentille torique annuelle Soleko."},
+  {id:"230",brand:"SOLEKO",name:"Soleko Spheric",price:2800,type:"Annuelles",boxes:"1 lentille",image:"https://d17sjz7j5l4n5m.cloudfront.net/products/06542cc1f5af33ab6e16edc4615c0b0d",description:"Lentille spherique annuelle Soleko."},
+  {id:"229",brand:"CORNELIA",name:"Cornelia Torique",price:8250,type:"Annuelles",boxes:"1 lentille",image:"https://d17sjz7j5l4n5m.cloudfront.net/products/f0f06d30527243c919d659ce89ab5c5c",description:"Lentille torique annuelle."},
+  {id:"221",brand:"MENICON",name:"PremiO Toric",price:11200,type:"Bi-hebdomadaires",boxes:"6 lentilles",image:"https://d17sjz7j5l4n5m.cloudfront.net/products/161132e43d9f237e853ea283c151b9f8",description:"Lentilles toriques bi-hebdomadaires."},
+  {id:"220",brand:"MENICON",name:"PremiO",price:7500,type:"Bi-hebdomadaires",boxes:"6 lentilles",image:"https://d17sjz7j5l4n5m.cloudfront.net/products/692bcf46b9f7cd303984f7842f3967bc",description:"Lentilles PremiO bi-hebdomadaires."},
+  {id:"219",brand:"ACUVUE",name:"ACUVUE Oasys for Astigmatism",price:12000,type:"Bi-hebdomadaires",boxes:"6 lentilles",image:"https://d17sjz7j5l4n5m.cloudfront.net/products/076a36132dd4fd17cfc70d7ee264f2ec",description:"Lentilles pour astigmatisme."},
+  {id:"218",brand:"ACUVUE",name:"ACUVUE Oasys",price:7950,type:"Bi-hebdomadaires",boxes:"6 lentilles",image:"https://d17sjz7j5l4n5m.cloudfront.net/products/054555510672fd58b962712a648a9425",description:"Lentilles Acuvue Oasys."},
+  {id:"217",brand:"BAUSCH + LOMB",name:"PureVision 2",price:8400,type:"Mensuelles",boxes:"6 lentilles",image:"https://d17sjz7j5l4n5m.cloudfront.net/products/6017af783a3aa01efa641c6085abc9cf",description:"Lentilles mensuelles PureVision 2."},
+  {id:"216",brand:"ALCON",name:"Air Optix plus Hydraglyde for Astigmatism",price:18700,type:"Mensuelles",boxes:"6 lentilles",image:"https://d17sjz7j5l4n5m.cloudfront.net/products/e754857601838a41e7db87981a4c07a5",description:"Lentilles Air Optix pour astigmatisme."},
+  {id:"215",brand:"MENICON",name:"Miru Toric",price:16400,type:"Mensuelles",boxes:"6 lentilles",image:"https://d17sjz7j5l4n5m.cloudfront.net/products/21d81a3beab1994ca0dbdcfc84769650",description:"Lentilles toriques Miru."},
+);
 const power = Array.from({length: 201}, (_, i) => (-25 + i * .25).toFixed(2).replace(".00", ".00"));
 function money(value:number) { return new Intl.NumberFormat("fr-DZ").format(value) + " DA"; }
 
