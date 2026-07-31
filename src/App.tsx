@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type Product = { id: string; brand: string; name: string; price: number; type: string; image: string; description: string; boxes: string };
 const products: Product[] = [
@@ -36,13 +36,17 @@ const power = Array.from({length: 201}, (_, i) => (-25 + i * .25).toFixed(2).rep
 function money(value:number) { return new Intl.NumberFormat("fr-DZ").format(value) + " DA"; }
 
 export default function App(){
- const [selected,setSelected]=useState<Product|null>(null); const [step,setStep]=useState(0); const [same,setSame]=useState<boolean|null>(null); const [method,setMethod]=useState<"manual"|"photo"|null>(null); const [qty,setQty]=useState(0); const [filter,setFilter]=useState("Toutes"); const [brand,setBrand]=useState("Toutes");
+ const [selected,setSelected]=useState<Product|null>(null); const [buying,setBuying]=useState(false); const [step,setStep]=useState(0); const [same,setSame]=useState<boolean|null>(null); const [method,setMethod]=useState<"manual"|"photo"|null>(null); const [qty,setQty]=useState(0); const [filter,setFilter]=useState("Toutes"); const [brand,setBrand]=useState("Toutes");
  const brands = ["Toutes", ...Array.from(new Set(products.map((product) => product.brand)))];
  const shown=useMemo(()=>products.filter((product)=> (filter==="Toutes"||product.type===filter) && (brand==="Toutes"||product.brand===brand)),[filter,brand]);
- const open=(p:Product)=>{setSelected(p);setStep(0);setSame(null);setMethod(null);setQty(0);window.scrollTo({top:0,behavior:"smooth"})};
- if(selected) return <main className="checkout">
+ useEffect(()=>{const syncProduct=()=>{const id=window.location.hash.match(/^#\/produit\/(.+)$/)?.[1];if(id){const product=products.find(item=>item.id===id);if(product){setSelected(product);setBuying(false)}}else setSelected(null)};syncProduct();window.addEventListener("hashchange",syncProduct);return()=>window.removeEventListener("hashchange",syncProduct)},[]);
+ const open=(p:Product)=>{setSelected(p);setBuying(false);window.location.hash=`/produit/${p.id}`;window.scrollTo({top:0,behavior:"smooth"})};
+ const backToShop=()=>{setSelected(null);setBuying(false);window.location.hash="catalogue"};
+ const startBuying=()=>{setBuying(true);setStep(0);setSame(null);setMethod(null);setQty(0);window.scrollTo({top:0,behavior:"smooth"})};
+ if(selected&&!buying) return <ProductDetail product={selected} onBack={backToShop} onBuy={startBuying}/>;
+ if(selected&&buying) return <main className="checkout">
 <header className="checkoutHead">
-<button onClick={()=>setSelected(null)} className="back">← Retour à la boutique</button>
+<button onClick={()=>setBuying(false)} className="back">← Retour au produit</button>
 <a className="logo">PRO <i>LENS</i>
 </a>
 <span>Commande sécurisée</span>
@@ -114,10 +118,10 @@ export default function App(){
 </div>
 <div className="heroVisual">
 <div className="orb"/>
-<img src="https://images.unsplash.com/photo-1559599101-f09722fb4948?auto=format&fit=crop&w=1000&q=85" alt="Femme portant des lentilles"/>
-<span>Confort<br/>
-<b>au quotidien</b>
-</span>
+<div className="heroPack heroPackMain"><img src="https://d17sjz7j5l4n5m.cloudfront.net/products/03ae7c2286efae0d8cfe44524b366ded" alt="Boîte de lentilles Air Optix Plus HydraGlyde"/></div>
+<div className="heroPack heroPackTop"><img src="https://d17sjz7j5l4n5m.cloudfront.net/products/e53158527a798b2f6123bfaca0d2395d" alt="Boîte de lentilles ACUVUE Vita"/></div>
+<div className="heroPack heroPackBottom"><img src="https://d17sjz7j5l4n5m.cloudfront.net/products/5ea08af10f6911dee7489972b66cb54c" alt="Boîte de lentilles Biofinity"/></div>
+<span><b>27 références</b><br/>pour votre vision</span>
 </div>
 </section>
 <section className="trust">
@@ -154,7 +158,7 @@ export default function App(){
 <p>{p.description}</p>
 <div>
 <strong>{money(p.price)}</strong>
-<button onClick={()=>open(p)} className="neumorphic">Sélectionner</button>
+<button onClick={()=>open(p)} className="neumorphic">Voir le produit</button>
 </div>
 </div>
 </article>)}</div>
@@ -180,13 +184,60 @@ export default function App(){
 </article>
 </div>
 </section>
-<footer>
-<a className="logo">PRO <i>LENS</i>
-</a>
-<p>Voir net, vivre libre.</p>
-<small>© 2026 Pro Lens. Tous droits réservés.</small>
+<footer className="siteFooter">
+<div className="footerMain">
+<div className="footerBrand">
+<a className="logo">PRO <i>LENS</i></a>
+<h3>Une vision claire,<br/>un choix simple.</h3>
+<p>Des lentilles reconnues, une ordonnance guidée et un accompagnement humain partout en Algérie.</p>
+</div>
+<div className="footerColumn">
+<strong>Boutique</strong>
+<a href="#catalogue">Toutes les lentilles</a>
+<a href="#catalogue">Choisir par marque</a>
+<a href="#conseils">Comment commander</a>
+</div>
+<div className="footerColumn">
+<strong>Besoin d’aide ?</strong>
+<a href="tel:+213550933421">+213 550 93 34 21</a>
+<a href="mailto:contact@prolens.dz">contact@prolens.dz</a>
+<span>Livraison partout en Algérie</span>
+</div>
+</div>
+<div className="footerBottom"><small>© 2026 Pro Lens. Tous droits réservés.</small><small>Developed by <b>SiteMagique</b></small></div>
 </footer>
 </main>
+}
+function ProductDetail({product,onBack,onBuy}:{product:Product;onBack:()=>void;onBuy:()=>void}){
+ return <main className="productPage">
+  <header className="checkoutHead productHeader">
+   <button onClick={onBack} className="back">← Retour à la boutique</button>
+   <a className="logo">PRO <i>LENS</i></a>
+   <span>Fiche produit</span>
+  </header>
+  <section className="productDetail">
+   <div className="detailVisual">
+    <span className="detailType">{product.type}</span>
+    <img src={product.image} alt={product.name}/>
+   </div>
+   <div className="detailContent">
+    <p className="eyebrow">{product.brand}</p>
+    <h1>{product.name}</h1>
+    <div className="detailPrice">{money(product.price)} <small>/ boîte</small></div>
+    <p className="detailDescription">{product.description}</p>
+    <div className="detailFacts">
+     <div><span>Conditionnement</span><strong>{product.boxes}</strong></div>
+     <div><span>Renouvellement</span><strong>{product.type}</strong></div>
+     <div><span>Commande</span><strong>Avec ordonnance</strong></div>
+    </div>
+    <button className="primary detailBuy" onClick={onBuy}>Sélectionner et acheter <span>→</span></button>
+    <p className="detailHelp">Vous pourrez saisir votre ordonnance ou la télécharger en photo à l’étape suivante.</p>
+   </div>
+  </section>
+  <section className="detailReassurance">
+   <span>✓ Produit authentique</span><span>⌁ Ordonnance guidée</span><span>◌ Livraison en Algérie</span>
+  </section>
+ </main>
 }
 function Prescription({same,onNext}:{same:boolean;onNext:()=>void}){const fields=same?["OD — Œil droit"]:["OD — Œil droit","OG — Œil gauche"];return <div className="panel prescription">
 <p className="eyebrow">ÉTAPE 1 / 3</p>
