@@ -1,2 +1,6 @@
 body, button, input, textarea, select { font-family: 'Manrope', sans-serif; }
 .logo i, .hero h1, h1, h2, h3, footer p { font-family: 'Outfit', sans-serif; }
+
+/* Product feeds include a white canvas around each pack. Crop it inside a white card. */
+.productImg { overflow: hidden; background: #fff; }
+.productImg img { width: 128%; height: 128%; max-width: none; max-height: none; object-fit: cover; transform: scale(1.02); filter: none; }
