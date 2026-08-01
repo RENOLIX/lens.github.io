@@ -6,3 +6,15 @@
   width: 1px;
   height: 1px;
 }
+
+.productPage .mainImage {
+  width: 100%;
+  min-height: 0;
+  aspect-ratio: 1 / 1;
+}
+
+@media (max-width: 800px) {
+  .productPage .mainImage {
+    min-height: 0;
+  }
+}
