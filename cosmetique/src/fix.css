@@ -7,6 +7,10 @@
   height: 1px;
 }
 
+.heroProducts > span {
+  display: none;
+}
+
 .productPage .mainImage {
   width: 100%;
   min-height: 0;
