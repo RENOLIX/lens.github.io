@@ -68,3 +68,6 @@ export async function getOrders(){
 export async function updateOrderStatus(id:string,status:string){
   await request(`orders/${encodeURIComponent(id)}?updateMask.fieldPaths=status&updateMask.fieldPaths=updatedAt`,{method:"PATCH",body:JSON.stringify(body({status,updatedAt:new Date()}))});
 }
+export async function deleteOrder(id:string){
+  await request(`orders/${encodeURIComponent(id)}`,{method:"DELETE"});
+}
