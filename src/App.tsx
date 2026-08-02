@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { submitLensOrder } from "./firebase-rest";
+import { compressPrescription } from "./image-file";
 
 type Product = { id: string; brand: string; name: string; price: number; type: string; image: string; description: string; boxes: string };
 const products: Product[] = [
@@ -45,13 +46,13 @@ const wilayas = [
 function money(value:number) { return new Intl.NumberFormat("fr-DZ").format(value) + " DA"; }
 
 export default function App(){
- const [selected,setSelected]=useState<Product|null>(null); const [buying,setBuying]=useState(false); const [step,setStep]=useState(0); const [same,setSame]=useState<boolean|null>(null); const [method,setMethod]=useState<"manual"|"photo"|null>(null); const [qty,setQty]=useState(0); const [filter,setFilter]=useState("Toutes"); const [brand,setBrand]=useState("Toutes");
+ const [selected,setSelected]=useState<Product|null>(null); const [buying,setBuying]=useState(false); const [step,setStep]=useState(0); const [same,setSame]=useState<boolean|null>(null); const [method,setMethod]=useState<"manual"|"photo"|null>(null); const [qty,setQty]=useState(0); const [filter,setFilter]=useState("Toutes"); const [brand,setBrand]=useState("Toutes"); const [prescriptionPhoto,setPrescriptionPhoto]=useState(""); const [prescriptionFileName,setPrescriptionFileName]=useState(""); const [photoError,setPhotoError]=useState("");
  const brands = ["Toutes", ...Array.from(new Set(products.map((product) => product.brand)))];
  const shown=useMemo(()=>products.filter((product)=> (filter==="Toutes"||product.type===filter) && (brand==="Toutes"||product.brand===brand)),[filter,brand]);
  useEffect(()=>{const syncProduct=()=>{const id=window.location.hash.match(/^#\/produit\/(.+)$/)?.[1];if(id){const product=products.find(item=>item.id===id);if(product){setSelected(product);setBuying(false)}}else setSelected(null)};syncProduct();window.addEventListener("hashchange",syncProduct);return()=>window.removeEventListener("hashchange",syncProduct)},[]);
  const open=(p:Product)=>{setSelected(p);setBuying(false);window.location.hash=`/produit/${p.id}`;window.scrollTo({top:0,behavior:"smooth"})};
  const backToShop=()=>{setSelected(null);setBuying(false);window.location.hash="catalogue"};
- const startBuying=()=>{setBuying(true);setStep(0);setSame(null);setMethod(null);setQty(0);window.scrollTo({top:0,behavior:"smooth"})};
+ const startBuying=()=>{setBuying(true);setStep(0);setSame(null);setMethod(null);setQty(0);setPrescriptionPhoto("");setPrescriptionFileName("");setPhotoError("");window.scrollTo({top:0,behavior:"smooth"})};
  if(selected&&!buying) return <ProductDetail product={selected} onBack={backToShop} onBuy={startBuying}/>;
  if(selected&&buying) return <main className="checkout">
 <header className="checkoutHead">
@@ -92,9 +93,10 @@ export default function App(){
 <button onClick={()=>setMethod("photo")} className={method==="photo"?"chosen":""}>Télécharger la photo <span>Une option facile si vous l’avez à portée de main.</span>
 </button>
 </div>{method==="photo"&&<>
-<label className="upload">Déposez votre ordonnance ici<input type="file" accept="image/*,.pdf"/>
+<label className="upload">Choisissez votre ordonnance depuis votre téléphone ou ordinateur<input type="file" accept="image/*" onChange={async e=>{const file=e.target.files?.[0];if(!file)return;setPhotoError("");try{setPrescriptionPhoto(await compressPrescription(file));setPrescriptionFileName(file.name)}catch(err){setPrescriptionPhoto("");setPrescriptionFileName("");setPhotoError(err instanceof Error?err.message:"Photo invalide.")}}}/>
 </label>
-<button className="primary" onClick={()=>setStep(3)}>Suivant</button>
+{prescriptionFileName&&<p className="uploadReady">✓ {prescriptionFileName} est prête</p>}{photoError&&<p className="formError">{photoError}</p>}
+<button disabled={!prescriptionPhoto} className="primary" onClick={()=>setStep(3)}>Suivant</button>
 </>}</div>}{step===2&&<Prescription same={same===true} onNext={()=>setStep(3)}/>} {step===3&&<div className="panel">
 <p className="eyebrow">ÉTAPE 2 / 3</p>
 <h1>Sélectionnez la quantité</h1>
@@ -106,7 +108,7 @@ export default function App(){
 <button onClick={()=>setQty(qty+1)}>+</button>
 </div>
 <button disabled={!qty} className="primary" onClick={()=>setStep(4)}>Commander — {money(qty*selected.price)}</button>
-</div>}{step===4&&<Order product={selected} qty={qty}/>}<HelpPhone/></section>
+</div>}{step===4&&<Order product={selected} qty={qty} prescriptionPhoto={prescriptionPhoto} prescriptionFileName={prescriptionFileName}/>}<HelpPhone/></section>
 </main>
  return <main>
 <header className="siteHead">
@@ -269,7 +271,7 @@ function Prescription({same,onNext}:{same:boolean;onNext:()=>void}){const fields
 </label>
 </fieldset>)}<button className="primary" onClick={onNext}>Suivant</button>
 </div>}
-function Order({product,qty}:{product:Product;qty:number}){const [sent,setSent]=useState(false);const [error,setError]=useState("");return <div className="panel">{sent?<>
+function Order({product,qty,prescriptionPhoto,prescriptionFileName}:{product:Product;qty:number;prescriptionPhoto:string;prescriptionFileName:string}){const [sent,setSent]=useState(false);const [error,setError]=useState("");return <div className="panel">{sent?<>
 <p className="eyebrow">DEMANDE ENREGISTRÉE</p>
 <h1>Merci, votre demande est prête.</h1>
 <p>Nous vous recontacterons rapidement afin de confirmer votre commande de {qty} boîte{qty>1?"s":""} de {product.name}.</p>
@@ -277,7 +279,7 @@ function Order({product,qty}:{product:Product;qty:number}){const [sent,setSent]=
 <p className="eyebrow">ÉTAPE 3 / 3</p>
 <h1>Vos coordonnées</h1>
 <p>Nous vous recontacterons pour confirmer votre commande — aucun paiement n’est demandé en ligne.</p>
-<form onSubmit={async e=>{e.preventDefault();setError("");const data=new FormData(e.currentTarget);try{await submitLensOrder({customerName:data.get("customerName"),phone:data.get("phone"),wilaya:data.get("wilaya"),address:data.get("address"),productId:product.id,productName:product.name,productBrand:product.brand,unitPrice:product.price,quantity:qty,total:product.price*qty});setSent(true)}catch(err){setError(err instanceof Error?err.message:"Impossible d’envoyer la commande.")}}}>
+<form onSubmit={async e=>{e.preventDefault();setError("");const data=new FormData(e.currentTarget);try{await submitLensOrder({customerName:data.get("customerName"),phone:data.get("phone"),wilaya:data.get("wilaya"),address:data.get("address"),productId:product.id,productName:product.name,productBrand:product.brand,unitPrice:product.price,quantity:qty,total:product.price*qty,prescriptionPhoto:prescriptionPhoto||undefined,prescriptionFileName:prescriptionFileName||undefined});setSent(true)}catch(err){setError(err instanceof Error?err.message:"Impossible d’envoyer la commande.")}}}>
 <label>Nom complet<input name="customerName" required placeholder="Votre nom"/>
 </label>
 <label>Téléphone<input name="phone" required type="tel" placeholder="05 xx xx xx xx"/>

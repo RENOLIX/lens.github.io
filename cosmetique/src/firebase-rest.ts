@@ -3,7 +3,8 @@ export type CatalogProduct = {
   short: string; description: string; benefits: string[]; usage: string;
 };
 
-export type DeliveryPrices = { desk: number; home: number };
+export type DeliveryRate = { desk: number; home: number };
+export type DeliveryPrices = DeliveryRate & { wilayas?: Record<string, DeliveryRate> };
 
 const API_KEY = "AIzaSyAoZ_T9UcSmOQ1aj7213IFVdFDWe8x9CxA";
 const BASE = "https://firestore.googleapis.com/v1/projects/lens-16470/databases/(default)/documents";
@@ -55,7 +56,7 @@ function writeCache<T>(key: string, value: T) {
 async function getDocument<T>(path: string): Promise<T | null> {
   const response = await fetch(`${BASE}/${path}?key=${API_KEY}`);
   if (response.status === 404) return null;
-  if (!response.ok) throw new Error("Firebase indisponible");
+  if (!response.ok) throw new Error("Service momentanément indisponible");
   const document = await response.json() as FireDocument;
   return fromFields(document.fields ?? {}) as T;
 }
@@ -76,10 +77,10 @@ export async function loadDeliveryPrices(): Promise<DeliveryPrices> {
   if (cached) return cached;
   try {
     const document = await getDocument<DeliveryPrices>("settings/delivery");
-    const prices = document?.desk && document?.home ? document : { desk: 450, home: 700 };
+    const prices = document?.desk && document?.home ? document : { desk: 450, home: 700, wilayas: {} };
     writeCache("dermae_delivery_v1", prices);
     return prices;
-  } catch { return { desk: 450, home: 700 }; }
+  } catch { return { desk: 450, home: 700, wilayas: {} }; }
 }
 
 export async function submitCosmeticOrder(order: Record<string, unknown>) {

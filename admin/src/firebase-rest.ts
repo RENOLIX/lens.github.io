@@ -1,10 +1,12 @@
 export type Product = { id:string; brand:string; name:string; price:number; size:string; image:string; short:string; description:string; benefits:string[]; usage:string };
-export type Delivery = { desk:number; home:number };
+export type DeliveryRate = { desk:number; home:number };
+export type Delivery = DeliveryRate & { wilayas?:Record<string,DeliveryRate> };
 export type Order = {
   id:string; source:"cosmetics"|"lens"; status:string; createdAt:string;
   customerName:string; phone:string; wilaya:string; address:string;
   productId:string; productName:string; productBrand?:string; unitPrice:number;
   quantity:number; delivery?:string; shipping?:number; total:number;
+  prescriptionPhoto?:string; prescriptionFileName?:string;
 };
 
 const API_KEY="AIzaSyAoZ_T9UcSmOQ1aj7213IFVdFDWe8x9CxA";
@@ -41,7 +43,7 @@ async function request(path:string,init:RequestInit={}){
   const idToken=token(); if(!idToken)throw new Error("Session expirée. Reconnectez-vous.");
   const response=await fetch(`${BASE}/${path}${path.includes("?")?"&":"?"}key=${API_KEY}`,{...init,headers:{"Content-Type":"application/json",Authorization:`Bearer ${idToken}`,...init.headers}});
   if(response.status===401||response.status===403){sessionStorage.removeItem(SESSION);throw new Error("Session expirée. Reconnectez-vous.");}
-  if(!response.ok)throw new Error("Firebase a refusé l’opération.");
+  if(!response.ok)throw new Error("L’opération n’a pas pu être enregistrée.");
   return response.status===204?null:response.json();
 }
 export function isSignedIn(){return Boolean(token());}
@@ -52,8 +54,12 @@ export async function signIn(email:string,password:string){
   const session=await response.json();sessionStorage.setItem(SESSION,JSON.stringify(session));return session;
 }
 export async function getCatalog(){const doc=await request("catalog/cosmetics") as FireDoc;return((fromFields(doc.fields??{}) as{products?:Product[]}).products??[]);}
-export async function saveCatalog(products:Product[]){await request("catalog/cosmetics",{method:"PATCH",body:JSON.stringify(body({products,updatedAt:new Date()}))});}
-export async function getDelivery(){const doc=await request("settings/delivery") as FireDoc;const value=fromFields(doc.fields??{}) as Delivery;return{desk:value.desk||450,home:value.home||700};}
+export async function saveCatalog(products:Product[]){
+  const payload=JSON.stringify(body({products,updatedAt:new Date()}));
+  if(new Blob([payload]).size>900000)throw new Error("Le catalogue contient trop de photos lourdes. Supprimez ou remplacez une photo.");
+  await request("catalog/cosmetics",{method:"PATCH",body:payload});
+}
+export async function getDelivery(){const doc=await request("settings/delivery") as FireDoc;const value=fromFields(doc.fields??{}) as Delivery;return{desk:value.desk||450,home:value.home||700,wilayas:value.wilayas||{}};}
 export async function saveDelivery(delivery:Delivery){await request("settings/delivery",{method:"PATCH",body:JSON.stringify(body({...delivery,updatedAt:new Date()}))});}
 export async function getOrders(){
   const data=await request("orders?pageSize=100&orderBy=createdAt%20desc") as{documents?:FireDoc[]};
