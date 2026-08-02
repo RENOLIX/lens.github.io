@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { submitLensOrder } from "./firebase-rest";
 
 type Product = { id: string; brand: string; name: string; price: number; type: string; image: string; description: string; boxes: string };
 const products: Product[] = [
@@ -268,7 +269,7 @@ function Prescription({same,onNext}:{same:boolean;onNext:()=>void}){const fields
 </label>
 </fieldset>)}<button className="primary" onClick={onNext}>Suivant</button>
 </div>}
-function Order({product,qty}:{product:Product;qty:number}){const [sent,setSent]=useState(false);return <div className="panel">{sent?<>
+function Order({product,qty}:{product:Product;qty:number}){const [sent,setSent]=useState(false);const [error,setError]=useState("");return <div className="panel">{sent?<>
 <p className="eyebrow">DEMANDE ENREGISTRÉE</p>
 <h1>Merci, votre demande est prête.</h1>
 <p>Nous vous recontacterons rapidement afin de confirmer votre commande de {qty} boîte{qty>1?"s":""} de {product.name}.</p>
@@ -276,17 +277,18 @@ function Order({product,qty}:{product:Product;qty:number}){const [sent,setSent]=
 <p className="eyebrow">ÉTAPE 3 / 3</p>
 <h1>Vos coordonnées</h1>
 <p>Nous vous recontacterons pour confirmer votre commande — aucun paiement n’est demandé en ligne.</p>
-<form onSubmit={e=>{e.preventDefault();setSent(true)}}>
-<label>Nom complet<input required placeholder="Votre nom"/>
+<form onSubmit={async e=>{e.preventDefault();setError("");const data=new FormData(e.currentTarget);try{await submitLensOrder({customerName:data.get("customerName"),phone:data.get("phone"),wilaya:data.get("wilaya"),address:data.get("address"),productId:product.id,productName:product.name,productBrand:product.brand,unitPrice:product.price,quantity:qty,total:product.price*qty});setSent(true)}catch(err){setError(err instanceof Error?err.message:"Impossible d’envoyer la commande.")}}}>
+<label>Nom complet<input name="customerName" required placeholder="Votre nom"/>
 </label>
-<label>Téléphone<input required type="tel" placeholder="05 xx xx xx xx"/>
+<label>Téléphone<input name="phone" required type="tel" placeholder="05 xx xx xx xx"/>
 </label>
-<label>Wilaya<select required defaultValue="">
+<label>Wilaya<select name="wilaya" required defaultValue="">
 <option value="" disabled>Sélectionnez votre wilaya</option>{wilayas.map(wilaya=><option value={wilaya} key={wilaya}>{wilaya}</option>)}
 </select>
 </label>
-<label>Adresse de livraison<textarea required placeholder="Commune, quartier, rue et numéro"/>
+<label>Adresse de livraison<textarea name="address" required placeholder="Commune, quartier, rue et numéro"/>
 </label>
+{error&&<p className="formError">{error}</p>}
 <button className="primary">Envoyer ma demande</button>
 </form>
 </>}</div>}

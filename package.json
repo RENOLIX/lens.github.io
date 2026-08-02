@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "scripts": { "dev": "vite", "build": "tsc --noEmit && vite build", "dev:cosmetique": "vite --config vite.cosmetique.config.ts", "build:cosmetique": "tsc -p cosmetique/tsconfig.json && vite build --config vite.cosmetique.config.ts" },
+  "scripts": { "dev": "vite", "build": "tsc --noEmit && vite build", "dev:cosmetique": "vite --config vite.cosmetique.config.ts", "build:cosmetique": "tsc -p cosmetique/tsconfig.json && vite build --config vite.cosmetique.config.ts", "dev:admin": "vite --config vite.admin.config.ts", "build:admin": "tsc -p admin/tsconfig.json && vite build --config vite.admin.config.ts" },
   "dependencies": { "@vitejs/plugin-react-swc": "^3.10.2", "react": "^19.1.0", "react-dom": "^19.1.0", "vite": "^6.3.5" },
   "devDependencies": { "@types/react": "^19.1.2", "@types/react-dom": "^19.1.2", "typescript": "~5.8.3" }
 }
