@@ -105,7 +105,7 @@ export default function App(){
 <button onClick={()=>setQty(qty+1)}>+</button>
 </div>
 <button disabled={!qty} className="primary" onClick={()=>setStep(4)}>Commander — {money(qty*selected.price)}</button>
-</div>}{step===4&&<Order product={selected} qty={qty}/>}</section>
+</div>}{step===4&&<Order product={selected} qty={qty}/>}<HelpPhone/></section>
 </main>
  return <main>
 <header className="siteHead">
@@ -151,7 +151,7 @@ export default function App(){
 <button className={filter===x?"active":""} onClick={()=>setFilter(x)} key={x}>{x}</button>)}</div>
 </div>
 <div className="grid">{shown.map(p=>
-<article className="card" key={p.id}>
+<article className="card" key={p.id} onClick={()=>open(p)} role="link" tabIndex={0} onKeyDown={event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();open(p)}}}>
 <div className="productImg">
 <img src={p.image} alt={p.name}/>
 <span>{p.type}</span>
@@ -162,7 +162,7 @@ export default function App(){
 <p>{p.description}</p>
 <div>
 <strong>{money(p.price)}</strong>
-<button onClick={()=>open(p)} className="neumorphic">Voir le produit</button>
+<button className="neumorphic">Voir le produit</button>
 </div>
 </div>
 </article>)}</div>
@@ -212,6 +212,7 @@ export default function App(){
 </footer>
 </main>
 }
+function HelpPhone(){return <aside className="helpPhone"><span>Besoin d’aide avec votre ordonnance ou votre commande&nbsp;?</span><strong>Appelez-nous, nous sommes là pour vous aider.</strong><a href="tel:0542254332">0542 25 43 32</a></aside>}
 function ProductDetail({product,onBack,onBuy}:{product:Product;onBack:()=>void;onBuy:()=>void}){
  return <main className="productPage">
   <header className="checkoutHead productHeader">
@@ -241,6 +242,7 @@ function ProductDetail({product,onBack,onBuy}:{product:Product;onBack:()=>void;o
   <section className="detailReassurance">
    <span>✓ Produit authentique</span><span>⌁ Ordonnance guidée</span><span>◌ Livraison en Algérie</span>
   </section>
+ <HelpPhone/>
  </main>
 }
 function Prescription({same,onNext}:{same:boolean;onNext:()=>void}){const fields=same?["OD — Œil droit"]:["OD — Œil droit","OG — Œil gauche"];return <div className="panel prescription">
