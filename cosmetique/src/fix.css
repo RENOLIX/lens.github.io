@@ -42,7 +42,7 @@
     background-image:
       linear-gradient(90deg, rgba(245, 245, 240, 0.97) 0%, rgba(245, 245, 240, 0.87) 55%, rgba(245, 245, 240, 0.45) 100%),
       url("/lens.github.io/cosmetique/hero-cosmetics.png");
-    background-position: 66% center;
+    background-position: 78% center;
   }
 
   .hero > div:first-child {
